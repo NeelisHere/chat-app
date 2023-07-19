@@ -1,12 +1,51 @@
-const login = (req, res) => {
-    console.log(`[endpoint working] inside: api/v1/users/login`.cyan)
-    res.json({
-        success: true,
-        data: req.body
-    })
-}
-const register = () => {
-    console.log(`[endpoint working] inside: api/v1/users/register`.blue.bold)
-}
+const asyncHandler = require('express-async-handler')
+const User = require('../models/userModel.js')
+const handleError = require('../config/error.js')
+const generateToken = require('../config/generateToken.js')
+const bcrypt = require('bcrypt')
+
+const login = asyncHandler(async (req, res) => {
+    const { username, password } = req.body
+    const user = await User.findOne({ username }).select('+password')
+    const isMatch = await bcrypt.compare(password, user.password)
+    if(user && isMatch){
+        res.json({
+            success: true,
+            user
+        })
+    }else{
+        res.status(401)
+        throw new Error('Invalid username or password.')
+    }
+})
+
+const register = asyncHandler(async (req, res) => {
+    const { username, email, password, confirmedPassword, pfp } = req.body
+
+    if(!username || !email || !password || !confirmedPassword){
+        handleError(res, 'Please enter all the fields.', 400)
+    }
+
+    if(password !== confirmedPassword){
+        handleError(res, 'Passwords did not match.', 400)
+    }
+
+    const userExists = await User.findOne({ username })
+    if(userExists){
+        handleError(res, 'User already exists', 400)
+    }
+
+    const hash = await bcrypt.hash(password, 10)
+    const {_doc: user} = await User.create({ username, email, password: hash, pfp })
+
+    if(user){
+        res.status(201).json({
+            success:true,
+            user: {...user, token: generateToken(user._id)}
+        })
+    }else{
+        handleError(res, 'Failed to create user.', 400)
+    }
+})
 
 module.exports={ login, register }

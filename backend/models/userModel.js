@@ -1,8 +1,10 @@
 const mongoose = require('mongoose')
+const bcrypt = require('bcrypt')
 
-const userSchema = {
-    name:{
+const schema = {
+    username:{
         type: String,
+        unique: true,
         required: true
     },
     email:{
@@ -18,8 +20,9 @@ const userSchema = {
         default: 'https://icon-library.com/images/141782.svg.svg'
     },
 }
-const userModel = mongoose.Schema(userSchema)
-const User = mongoose.model('User', userModel)
+const userSchema = mongoose.Schema(schema)
+
+const User = mongoose.model('User', userSchema)
 
 module.exports = User
 

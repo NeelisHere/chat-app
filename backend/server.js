@@ -1,7 +1,6 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
-const chatData = require('./data/chatData')
 const connectDB = require('./config/db')
 const userRouters = require('./routes/userRoutes.js')
 // const colors = require('colors')
@@ -29,6 +28,8 @@ app.get('/', (req, res) => {
 app.listen(PORT, ()=>{
     console.log(`listening on: http://localhost:${PORT}`)
 });
+
+
 
 
 //npaulbe19
