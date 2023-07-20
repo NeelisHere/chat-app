@@ -1,13 +1,18 @@
 import React, { useState } from 'react'
-import { VStack } from '@chakra-ui/react'
+import { VStack, useToast } from '@chakra-ui/react'
 import { FormControl } from '@chakra-ui/react'
 import { Input, InputGroup, InputRightAddon } from '@chakra-ui/react'
 import { useForm } from "react-hook-form";
 import { Button } from '@chakra-ui/react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 
 const Login = () => {
     const [show, setShow] = useState(false)
+    const [loading, setLoading] = useState(false)
+    const toast = useToast()
+    const navigate = useNavigate()
 
     const {
         handleSubmit,
@@ -15,14 +20,39 @@ const Login = () => {
         formState: { errors, isSubmitting },
     } = useForm()
 
-    const onSubmit = (values) => {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                // alert(JSON.stringify(values, null, 2))
-                console.log(values)
-                resolve()
-            }, 2000)
-        })
+    const onSubmit = async (values) => {
+        // console.log(values)
+        setLoading(true)
+        try {
+            const config = {
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }
+            const {data} = await axios.post('/api/v1/users/login', values, config)
+            // console.log(data)
+            toast({
+                title: 'Success:',
+                description: "Logged in successfully.",
+                status: 'success',
+                duration: 9000,
+                isClosable: true,
+            })
+            localStorage.setItem('userInfo', JSON.stringify(data.user))
+            setLoading(false)
+            // navigate('/chats')
+
+        } catch (error) {
+            console.log(error)
+            toast({
+                title: 'Error:',
+                description: "Login failed.",
+                status: 'warning',
+                duration: 9000,
+                isClosable: true,
+            })
+            setLoading(false)
+        }
     }
 
     return (
@@ -44,7 +74,7 @@ const Login = () => {
                     <InputGroup>
                         <Input
                             type={show ? 'text' : 'password'}
-                            placeholder='password'
+                            placeholder='Password'
                             {...register('password', {
                                 required: 'This is required',
                                 minLength: { value: 4, message: 'Minimum length should be 4' },
@@ -67,7 +97,7 @@ const Login = () => {
                 <Button
                     width={'100%'}
                     colorScheme='teal'
-                    isLoading={isSubmitting}
+                    isLoading={loading}
                     type='submit'
                     style={{
                         marginTop: 30,

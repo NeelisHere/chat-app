@@ -4,26 +4,96 @@ import { FormControl } from '@chakra-ui/react'
 import { Input, InputGroup, InputRightAddon } from '@chakra-ui/react'
 import { useForm } from "react-hook-form";
 import { Button } from '@chakra-ui/react';
+import { useToast } from '@chakra-ui/react'
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 
 const Register = () => {
-    // const { register, handleSubmit } = useForm();
+    const toast = useToast()
     const [show, setShow] = useState(false)
+    const [loading, setLoading] = useState(false)
+    const navigate = useNavigate()
 
     const {
         handleSubmit,
         register,
-        formState: { errors, isSubmitting },
+        // formState: { errors, isSubmitting },
     } = useForm()
 
-    const onSubmit = (values) => {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                // alert(JSON.stringify(values, null, 2))
-                console.log(values)
-                resolve()
-            }, 2000)
-        })
+    const onSubmit = async (values) => {
+        setLoading(true)
+        if (values.pfp.length === 0) {
+            console.log(values.pfp)
+            setLoading(false)
+            return;
+        }
+        const { type: image_type } = values.pfp[0]
+        const allowedImageTypes = ['jpeg', 'jpg', 'png']
+        if (allowedImageTypes.includes(image_type.split('/')[1])) {
+            const data = new FormData()
+            data.append("file", values.pfp[0])
+            data.append('upload_preset', 'chat-app-v1.0')
+            data.append('cloud_name', 'npaul-703')
+            fetch('https://api.cloudinary.com/v1_1/npaul-703/image/upload', {
+                method: 'POST',
+                body: data
+            }).then((res) => res.json())
+                .then( async (data) => {
+                    values.pfp = data.url.toString()
+                    // console.log(values)
+                    try {
+                        const config = {
+                            headers: {
+                                "Content-Type": "application/json"
+                            }
+                        }
+                        const {data} = await axios.post('/api/v1/users/register', values, config)
+                        // console.log(data)
+                        toast({
+                            title: 'Success:',
+                            description: "Account created successfully.",
+                            status: 'success',
+                            duration: 9000,
+                            isClosable: true,
+                        })
+                        localStorage.setItem('userInfo', JSON.stringify(data.user))
+                        setLoading(false)
+                        navigate('/chats')
+
+                    } catch (error) {
+                        console.log(error)
+                        setLoading(false)
+                        toast({
+                            title: 'Error:',
+                            description: "Couldn't register.",
+                            status: 'warning',
+                            duration: 9000,
+                            isClosable: true,
+                        })
+                    }
+                })
+                .catch((err) => {
+                    console.log(err)
+                    setLoading(false)
+                    toast({
+                        title: 'Error:',
+                        description: "Couldn't upload image.",
+                        status: 'warning',
+                        duration: 9000,
+                        isClosable: true,
+                    })
+                })
+
+        } else {
+            toast({
+                title: 'Error:',
+                description: "Please select an image.",
+                status: 'warning',
+                duration: 9000,
+                isClosable: true,
+            })
+        }
     }
 
     return (
@@ -112,11 +182,10 @@ const Register = () => {
                 <Button
                     width={'100%'}
                     colorScheme='teal'
-                    isLoading={isSubmitting}
+                    isLoading={loading}
                     type='submit'
                     style={{
                         marginTop: 30,
-                        // backgroundColor: 'black',
                         color: 'white'
                     }}
                 >

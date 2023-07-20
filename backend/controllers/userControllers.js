@@ -48,4 +48,9 @@ const register = asyncHandler(async (req, res) => {
     }
 })
 
-module.exports={ login, register }
+const getAllUsers = asyncHandler(async (req, res) => {
+    const keywords = req.query
+    res.json({keywords})
+})
+
+module.exports={ login, register, getAllUsers }
