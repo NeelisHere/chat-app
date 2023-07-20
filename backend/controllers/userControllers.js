@@ -11,7 +11,8 @@ const login = asyncHandler(async (req, res) => {
     if(user && isMatch){
         res.json({
             success: true,
-            user
+            user,
+            token: generateToken(user._id)
         })
     }else{
         res.status(401)
@@ -49,8 +50,17 @@ const register = asyncHandler(async (req, res) => {
 })
 
 const getAllUsers = asyncHandler(async (req, res) => {
-    const keywords = req.query
-    res.json({keywords})
+    const keyword = req.query.search ? {
+        $or:[
+            { username: { $regex: req.query.search, $options: 'i' } },
+            { email: { $regex: req.query.search, $options: 'i' } }
+        ]
+    }:{}
+    const users = await User.find(keyword).find({ _id: { $ne: req.user._id } })
+    res.json({
+        success: true,
+        users
+    })
 })
 
 module.exports={ login, register, getAllUsers }

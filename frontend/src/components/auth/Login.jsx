@@ -38,7 +38,7 @@ const Login = () => {
                 duration: 9000,
                 isClosable: true,
             })
-            localStorage.setItem('userInfo', JSON.stringify(data.user))
+            localStorage.setItem('userInfo', JSON.stringify({...data.user, token: data.token}))
             setLoading(false)
             // navigate('/chats')
 
