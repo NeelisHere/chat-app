@@ -2,7 +2,8 @@ const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const connectDB = require('./config/db')
-const userRouters = require('./routes/userRoutes.js')
+const userRoutes = require('./routes/userRoutes.js')
+const chatRoutes = require('./routes/chatRoutes.js')
 // const colors = require('colors')
 
 const app = express();
@@ -11,7 +12,8 @@ connectDB()
 
 app.use(cors())
 app.use(express.json());
-app.use('/api/v1/users', userRouters)
+app.use('/api/v1/users', userRoutes)
+app.use('/api/v1/chats', chatRoutes)
 
 const PORT= process.env.PORT || 8000
 

@@ -5,9 +5,6 @@ const { protect } = require('../middlewares/auth.js')
 
 const router = express.Router()
 
-router.get('/', ()=>{
-    console.log('working...')
-})
 router.post('/login', init_route, login)
 router.post('/register', init_route, register)
 router.get('/all-users', init_route, protect, getAllUsers)
