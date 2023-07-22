@@ -2,6 +2,7 @@
 const asyncHandler = require('express-async-handler')
 const Chat = require('../models/chatModel.js')
 const User = require('../models/userModel.js')
+const {break_point}  = require('../config/debugger.js')
 
 
 const accessChat = asyncHandler(async (req, res) => {
@@ -64,11 +65,37 @@ const getChats = asyncHandler(async (req, res) => {
 })
 
 const createGroupChat = asyncHandler(async (req, res) => {
+    break_point(1)
+    console.log(req.body)
+    if(!req.body.users || !req.body.name){
+        return res.status(400).send({ message: 'please fill all the details.' })
+    }
+    break_point(2)
+    let users = JSON.parse(req.body.users)
+    if(users.length < 2){
+        return res.status(400).send('More than 2 users required to form a group-chat')
+    } 
+    users.push(req.user)
+    try {
+        const groupChat = await Chat.create({
+            chatName: req.body.name,
+            users,
+            isGroupChat: true,
+            groupAdmin: req.user
+        })
+        const fullGroupChat = await Chat.findOne({ _id: groupChat._id })
+            .populate('users', '-password')
+            .populate('groupAdmin', '-passowrd')
+        res.status(200).json(fullGroupChat)     
 
+    } catch (error) {
+        res.status(400)
+        throw new Error(error.message)
+    }
 })
 
 const renameGroup = asyncHandler(async (req, res) => {
-
+    
 })
 
 const removeFromGroup = asyncHandler(async (req, res) => {
