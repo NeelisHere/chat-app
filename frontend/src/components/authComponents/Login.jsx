@@ -40,7 +40,7 @@ const Login = () => {
             })
             localStorage.setItem('userInfo', JSON.stringify({...data.user, token: data.token}))
             setLoading(false)
-            // navigate('/chats')
+            navigate('/chats')
 
         } catch (error) {
             console.log(error)

@@ -2,10 +2,16 @@ import { Container } from "@chakra-ui/react"
 import { Box } from "@chakra-ui/react"
 import { Text } from "@chakra-ui/react"
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
-import Login from "../components/auth/Login"
-import Register from "../components/auth/Register"
+import Login from "../components/authComponents/Login"
+import Register from "../components/authComponents/Register"
+// import { useEffect } from 'react';
+// import { useChatStore } from '../store';
+// import { useNavigate } from 'react-router-dom';
 
 const HomePage = () => {
+
+    
+
     return (
         <Container maxW='xl' centerContent>
             <Box
