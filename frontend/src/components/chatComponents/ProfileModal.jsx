@@ -11,7 +11,7 @@ import {
 	useDisclosure,
 	Button,
 	Image,
-	Text
+	Text,
 } from '@chakra-ui/react'
 // import { useDisclosure } from '@chakra-ui/react'
 // import { Button } from '@chakra-ui/react'
