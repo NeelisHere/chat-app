@@ -14,11 +14,15 @@ const ChatPage = () => {
 	const navigate = useNavigate()
 	useEffect(() => {
 		// fetchChats('http://localhost:8000/api/v1/chats/get-chats')
-		const currentUser = JSON.parse(localStorage.getItem('userInfo'));
-		getCurrentUser(currentUser)
-		if(!isLoggedIn){
-			navigate('/')
+		const fn = async() => {
+			const currentUser = await JSON.parse(localStorage.getItem('userInfo'));
+			await getCurrentUser(currentUser)
+			// console.log(isLoggedIn)
+			// if (!isLoggedIn) {
+			// 	navigate('/')
+			// }
 		}
+		fn()
 
 	}, [])
 
@@ -30,20 +34,22 @@ const ChatPage = () => {
 	// 	setChats(chatData)
 	// }
 
-	
+
 
 	return (
-		<div style={{ width: '100%' }}>
-			{ isLoggedIn && <SideDrawer/>}
+		<div 
+			style={{ width: '100%' }}
+		>
+			{isLoggedIn && <SideDrawer />}
 			<Box
 				display={'flex'}
 				justifyContent={'space-between'}
 				w={'100%'}
-				h={'91.5vh'}
+				// h={'91.5vh'}
 				p={'10px'}
 			>
-				{ isLoggedIn && <MyChats/>}
-				{ isLoggedIn && <ChatBox/>}
+				{isLoggedIn && <MyChats />}
+				{isLoggedIn && <ChatBox />}
 			</Box>
 		</div>
 	)
