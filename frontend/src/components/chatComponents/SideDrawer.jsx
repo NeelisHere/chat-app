@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Box, Tooltip } from '@chakra-ui/react'
+import { Box, Spinner, Tooltip } from '@chakra-ui/react'
 import { Button } from '@chakra-ui/react'
 import { Text } from '@chakra-ui/react'
 import {
@@ -35,7 +35,7 @@ const SideDrawer = () => {
 		loading: false,
 		loadingChat: false
 	})
-	const { user } = useChatStore((state) => state)
+	const { user, chats, selectedChat, setChats, setSelectedChat } = useChatStore((state) => state)
 	const navigate = useNavigate()
 	const toast = useToast()
 	const { isOpen, onOpen, onClose } = useDisclosure()
@@ -59,6 +59,7 @@ const SideDrawer = () => {
 			}
 			const { data } = await axios.get(`/api/v1/users/all-users?search=${states.search}`, config)
 			setStates({ ...states, loading: false, searchResult: data.users })
+
 		} catch (error) {
 			toast({
 				title: 'Error occured',
@@ -71,8 +72,32 @@ const SideDrawer = () => {
 		}
 	}
 
-	const accessChat = (userId) => {
-		alert(userId)
+	const accessChat = async ({ _id:userId, username}) => {
+		// alert(`${username}->${userId}`)
+		try {
+			setStates({...states, loading: true})
+			const config = {
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${user.token}`
+				}
+			}
+			const { data } = await axios.post(`/api/v1/chats/access-chat`, { userId }, config)
+			console.log(data)
+			if(!chats.find((c)=> c._id === data._id))setChats([...data, ...chats])
+			setStates({ ...states, loading: false })
+			setSelectedChat(data)
+			onClose()
+		} catch (error) {
+			toast({
+				title: 'Error occured',
+				description: 'Failed to load the Search Results',
+				status: 'error',
+				duration: 5000,
+				isClosable: true,
+				position: 'bottom-left'
+			})
+		}
 	}
 
 	return (
@@ -97,7 +122,7 @@ const SideDrawer = () => {
 			>
 				<Tooltip label='Search Users to chat' hasArrow placement='bottom-end'>
 					<Button variant={'ghost'} onClick={onOpen}>
-						<i class="fa-solid fa-magnifying-glass"></i>
+						<i className="fa-solid fa-magnifying-glass"></i>
 						<Text display={{ base: 'none', md: 'flex' }} px={4}>Search User</Text>
 					</Button>
 				</Tooltip>
@@ -105,7 +130,7 @@ const SideDrawer = () => {
 				<div>
 					<Menu>
 						<MenuButton p={1} m={'0px 10px 0px 10px'}>
-							<i class="fa-solid fa-bell" style={{ color: '#000000' }}></i>
+							<i className="fa-solid fa-bell" style={{ color: '#000000' }}></i>
 						</MenuButton>
 						{/* <MenuList></MenuList> */}
 					</Menu>
@@ -132,7 +157,7 @@ const SideDrawer = () => {
 			</Box>
 			<Drawer placement='left' onClose={onClose} isOpen={isOpen}>
 				<DrawerOverlay />
-				<DrawerContent bg={'#f4f4f4'}>
+				<DrawerContent bg={'#F3F6F9'}>
 					<DrawerHeader borderBottomWidth={'1px'}>Search Users</DrawerHeader>
 					<DrawerBody>
 						<Box
@@ -149,10 +174,13 @@ const SideDrawer = () => {
 									setStates({ ...states, search: e.target.value })
 								}}
 							/>
-							<Button
-								onClick={handleSearch}
-							>
-								<SearchIcon/>
+							
+							<Button onClick={handleSearch}>
+								{
+									states.loading ?
+									<Spinner ml={'auto'} display={'flex'}/>:
+									<SearchIcon/>
+								}
 							</Button>
 						</Box>
 						<br />
@@ -160,13 +188,13 @@ const SideDrawer = () => {
 							states.loading ?
 							<ChatLoading/>:
 							(
-								states.searchResult.map((user)=>{
+								states.searchResult?.map((user)=>{
 									return(
 										<UserListItem 
 											key={user._id}
 											user={user}
 											handleFunction={()=>{
-												accessChat(user._id)
+												accessChat(user)
 											}}
 										/>
 									)
