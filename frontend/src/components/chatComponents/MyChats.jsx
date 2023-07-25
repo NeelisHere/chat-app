@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
 import { useChatStore } from '../../store'
-import { Box, useToast, Button, Stack, Text } from '@chakra-ui/react'
+import { Box, useToast, Button, Stack, Text, Avatar } from '@chakra-ui/react'
 import axios from 'axios'
 import { AddIcon } from '@chakra-ui/icons'
 import ChatLoading from './ChatLoading.jsx'
+import GroupChatModal from './GroupChatModal'
 
 
 const MyChats = () => {
@@ -62,14 +63,16 @@ const MyChats = () => {
             // boxShadow={'base'}
             >
                 My Chats
-                <Button
-                    // bg={'teal'}
-                    color={'teal'}
-                    display={'flex'}
-                    rightIcon={<AddIcon />}
-                >
-                    New Group Chat
-                </Button>
+                <GroupChatModal>
+                    <Button
+                        // bg={'teal'}
+                        color={'teal'}
+                        display={'flex'}
+                        rightIcon={<AddIcon />}
+                    >
+                        New Group Chat
+                    </Button>
+                </GroupChatModal>
             </Box>
             <Box
                 display={'flex'}
@@ -92,32 +95,41 @@ const MyChats = () => {
                             {
                                 chats.map((chat, index) => (
                                     <Box
-                                        onClick={()=>setSelectedChat(chat)}
+                                        onClick={() => setSelectedChat(chat)}
                                         cursor={'pointer'}
                                         bg={'#f4f4f4'}
-                                        // bg={'#f4f4f4'}
-                                        boxShadow={ 'base' }
+                                        // boxShadow={'base'}
                                         px={3}
                                         py={2}
                                         borderRadius={'lg'}
-                                        border={'1px solid #f5f5f5'}
                                         w={'100%'}
                                         key={index}
+                                        display={'flex'}
+                                        alignItems={'center'}
                                     >
                                         {/* {chat._id}
                                         {console.log(chat._id)} */}
-                                        <Text>
-                                            {
-                                                !chat.isGroupChat? 
-                                                (
-                                                    chat.users[0]._id === loggedUser._id ? 
-                                                    chat.users[1].username : chat.users[0].username
-                                                )
-                                                : 
-                                                chat.chatName
-                                            }
-                                        </Text>
-                                        
+                                        <Avatar
+                                            mr={2}
+                                            size={'sm'}
+                                            cursor={'pointer'}
+                                            name={'x'}
+                                            // src={}
+                                        />
+                                        <Box>
+                                            <Text>
+                                                {
+                                                    !chat.isGroupChat ?
+                                                        (
+                                                            chat.users[0]._id === loggedUser._id ?
+                                                                chat.users[1].username : chat.users[0].username
+                                                        )
+                                                        :
+                                                        chat.chatName
+                                                }
+                                            </Text>
+                                            <Text fontSize={'xs'}>{'groupchat'}</Text>
+                                        </Box>
                                     </Box>
                                 ))
                             }
