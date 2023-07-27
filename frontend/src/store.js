@@ -12,10 +12,10 @@ export const useChatStore = create((set) => ({
         isLoggedIn: currentUser? true: false 
     })),
     setSelectedChat: (usersarray)=>set((state)=>{
-        return { selectedChat : usersarray}
+        return { ...state, selectedChat : usersarray}
     }),
     setChats: (userChats) => set((state)=>{
-        return { chats: userChats }
+        return { ...state, chats: userChats }
     })
 
 }));

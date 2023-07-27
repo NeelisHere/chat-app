@@ -48,6 +48,7 @@ const MyChats = () => {
             borderRadius={'lg'}
             boxShadow={'md'}
             overflowY={'hidden'}
+            
         // borderWidth={'1px'}
         >
             <Box
@@ -83,6 +84,13 @@ const MyChats = () => {
                 h={'100%'}
                 borderRadius={'lg'}
                 overflowY={'hidden'}
+                sx={
+                    {
+                        '&::-webkit-scrollbar': {
+                            display: 'none'
+                        }
+                    }
+                }
             >
                 {/* {console.log(chats, typeof chats)}
                 {chats.map((chat)=>{
@@ -91,47 +99,53 @@ const MyChats = () => {
                 })} */}
                 {
                     chats ?
-                        <Stack overflowY={'scroll'}>
+                        <Stack >
                             {
-                                chats.map((chat, index) => (
-                                    <Box
-                                        onClick={() => setSelectedChat(chat)}
-                                        cursor={'pointer'}
-                                        bg={'#f4f4f4'}
-                                        // boxShadow={'base'}
-                                        px={3}
-                                        py={2}
-                                        borderRadius={'lg'}
-                                        w={'100%'}
-                                        key={index}
-                                        display={'flex'}
-                                        alignItems={'center'}
-                                    >
-                                        {/* {chat._id}
-                                        {console.log(chat._id)} */}
-                                        <Avatar
-                                            mr={2}
-                                            size={'sm'}
+                                chats.map((chat, index) => {
+                                    const otherUser = chat.isGroupChat ? '' : chat.users.find(({ _id }) => (_id !== user._id))
+                                    console.log(otherUser)
+                                    const groupChatIconUrl = 'https://img.icons8.com/color/48/conference-skin-type-7.png'
+                                    return (
+                                        <Box
+                                            onClick={() => setSelectedChat(chat)}
                                             cursor={'pointer'}
-                                            name={'x'}
-                                            // src={}
-                                        />
-                                        <Box>
-                                            <Text>
-                                                {
-                                                    !chat.isGroupChat ?
-                                                        (
-                                                            chat.users[0]._id === loggedUser._id ?
-                                                                chat.users[1].username : chat.users[0].username
-                                                        )
-                                                        :
-                                                        chat.chatName
-                                                }
-                                            </Text>
-                                            <Text fontSize={'xs'}>{'groupchat'}</Text>
+                                            bg={selectedChat._id === chat._id?'teal':'#f4f4f4'}
+                                            color={selectedChat._id === chat._id?'white':'black'}
+                                            // boxShadow={'base'}
+                                            px={3}
+                                            py={2}
+                                            borderRadius={'lg'}
+                                            w={'100%'}
+                                            key={index}
+                                            display={'flex'}
+                                            alignItems={'center'}
+                                        >
+                                            {/* {chat._id}
+                                            {console.log(chat._id)} */}
+                                            <Avatar
+                                                mr={2}
+                                                size={'sm'}
+                                                cursor={'pointer'}
+                                                name={chat.isGroupChat ? 'groupchat' : otherUser.username}
+                                                src={chat.isGroupChat ? groupChatIconUrl : otherUser.pic}
+                                            />
+                                            <Box>
+                                                <Text>
+                                                    {
+                                                        !chat.isGroupChat ?
+                                                            (
+                                                                chat.users[0]._id === loggedUser._id ?
+                                                                    chat.users[1].username : chat.users[0].username
+                                                            )
+                                                            :
+                                                            chat.chatName
+                                                    }
+                                                </Text>
+                                                <Text fontSize={'xs'}>{'groupchat'}</Text>
+                                            </Box>
                                         </Box>
-                                    </Box>
-                                ))
+                                    )
+                                })
                             }
                         </Stack> :
                         <ChatLoading />
