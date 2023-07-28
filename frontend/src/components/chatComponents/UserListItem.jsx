@@ -1,13 +1,12 @@
 import { Box, Avatar, Text } from '@chakra-ui/react'
 import React from 'react'
-
-const UserListItem = ({ user, handleFunction }) => {
+const UserListItem = ({ user, handleFunction, isInGroupChatModal }) => {
     // console.log(user)
     return (
         <Box
             onClick={handleFunction}
             cursor={'pointer'}
-            bg={'white'}
+            bg={isInGroupChatModal?'#f4f4f4':'white'}
             shadow={'base'}
             _hover={{
                 shadow: 'md'
@@ -18,7 +17,7 @@ const UserListItem = ({ user, handleFunction }) => {
             color={'black'}
             px={3}
             py={3}
-            mb={2}
+            mb={3}
             borderRadius={'lg'}
         >
             {/* {user.username} */}
@@ -33,6 +32,7 @@ const UserListItem = ({ user, handleFunction }) => {
                 <Text>{user.username}</Text>
                 <Text fontSize={'xs'}>{user.email}</Text>
             </Box>
+            
         </Box>
     )
 }

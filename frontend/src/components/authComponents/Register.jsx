@@ -24,7 +24,7 @@ const Register = () => {
     const onSubmit = async (values) => {
         setLoading(true)
         if (values.pfp.length === 0) {
-            console.log(values.pfp)
+            // console.log(values.pfp)
             setLoading(false)
             return;
         }

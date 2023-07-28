@@ -43,7 +43,7 @@ const Login = () => {
             navigate('/chats')
 
         } catch (error) {
-            console.log(error)
+            // console.log(error)
             toast({
                 title: 'Error:',
                 description: "Login failed.",

@@ -103,7 +103,7 @@ const MyChats = () => {
                             {
                                 chats.map((chat, index) => {
                                     const otherUser = chat.isGroupChat ? '' : chat.users.find(({ _id }) => (_id !== user._id))
-                                    console.log(otherUser)
+                                    // console.log(otherUser)
                                     const groupChatIconUrl = 'https://img.icons8.com/color/48/conference-skin-type-7.png'
                                     return (
                                         <Box
@@ -141,7 +141,9 @@ const MyChats = () => {
                                                             chat.chatName
                                                     }
                                                 </Text>
-                                                <Text fontSize={'xs'}>{'groupchat'}</Text>
+                                                <Text fontSize={'xs'}>
+                                                    {chat.isGroupChat ?'Group Chat':'Personal Chat'}
+                                                </Text>
                                             </Box>
                                         </Box>
                                     )

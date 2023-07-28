@@ -83,8 +83,8 @@ const SideDrawer = () => {
 				}
 			}
 			const { data } = await axios.post(`/api/v1/chats/access-chat`, { userId }, config)
-			console.log('>>', data)
-			console.log('>>', chats)
+			// console.log('>>', data)
+			// console.log('>>', chats)
 			if(!chats.find((c)=> c._id === data._id))setChats([data, ...chats])
 			setStates({ ...states, loading: false })
 			setSelectedChat(data)
@@ -109,15 +109,7 @@ const SideDrawer = () => {
 				alignItems={'center'}
 				p={'5px 10px 5px 10px'}
 				bg={'white'}
-				// position={'absolute'}
-				// top={'20px'}
-				// left={'20px'}
-				// right={'20px'}
-
-				// w={'100%'}
-				// borderWidth={'5px'}
 				m={'20px 20px 20px 20px'}
-				// m={'5px'}
 				borderRadius={'md'}
 				boxShadow='md'
 			>
