@@ -17,7 +17,7 @@ const MyChats = () => {
                 headers: { Authorization: `Bearer ${user.token}` }
             }
             const { data } = await axios.get('/api/v1/chats/get-chats', config)
-            setChats([...chats, ...data])
+            setChats([...data])
         } catch (error) {
             toast({
                 title: 'Error occured',
@@ -33,7 +33,7 @@ const MyChats = () => {
     useEffect(() => {
         setLoggedUser(JSON.parse(localStorage.getItem('userInfo')))
         fetchChats()
-    }, [])
+    }, [chats])
 
     return (
         <Box
