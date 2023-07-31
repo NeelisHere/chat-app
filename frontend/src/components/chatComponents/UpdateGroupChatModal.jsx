@@ -27,6 +27,24 @@ const UpdateGroupChatModal = () => {
     const [loading, setLoading] = useState(false)
     const [renameLoading, setRenameLoading] = useState(false)
     const toast = useToast()
+    const fetchChats = async () => {
+        try {
+            const config = {
+                headers: { Authorization: `Bearer ${user.token}` }
+            }
+            const { data } = await axios.get('/api/v1/chats/get-chats', config)
+            setChats([...data])
+        } catch (error) {
+            toast({
+                title: 'Error occured',
+                description: 'Failed to load the Chats',
+                status: 'error',
+                duration: 5000,
+                isClosable: true,
+                position: 'bottom-left'
+            })
+        }
+    }
     const handleDelete = async (u) => {
         if(selectedChat.groupAdmin._id !== user._id){
             toast({
@@ -47,7 +65,8 @@ const UpdateGroupChatModal = () => {
                 chatId: selectedChat._id,
                 userId: u._id
             }, config)
-            setChats([...data])
+            setSelectedChat([...data.users])
+            fetchChats()
             setLoading(false)
         } catch (error) {
             toast({
@@ -75,6 +94,7 @@ const UpdateGroupChatModal = () => {
                 chatName: groupChatStates.groupChatName
             }, config)
             setSelectedChat(data)
+            fetchChats()
             setRenameLoading(false)
 
         } catch (error) {
@@ -105,7 +125,13 @@ const UpdateGroupChatModal = () => {
             const { data } = await axios.get(`/api/v1/users/all-users?search=${groupChatStates.search}`, config)
             // console.log('->', groupChatStates)
             setLoading(false)
-            setGroupChatStates({ ...groupChatStates, searchResult: data.users })
+            const filteredSearchResults = data.users.filter(({ _id }) => {
+                return selectedChat.users.reduce((status, u)=>{
+                    return (status && !(_id === u._id))
+                }, true)
+            })
+            // console.log(filteredSearchResults)
+            setGroupChatStates({ ...groupChatStates, searchResult: filteredSearchResults })
 
         } catch (error) {
             toast({
@@ -135,11 +161,14 @@ const UpdateGroupChatModal = () => {
             const config = {
                 headers: { Authorization: `Bearer ${user.token}` }
             }
+            // alert(`${selectedChat._id}, ${userToAdd._id}`)
             const { data } = await axios.put('/api/v1/chats/group/add-user', {
                 chatId: selectedChat._id,
                 userId: userToAdd._id
             }, config)
-            setChats([...data])
+            console.log(data)
+            setSelectedChat([...data.users])
+            fetchChats()
             setLoading(false)
         } catch (error) {
             toast({
@@ -168,13 +197,14 @@ const UpdateGroupChatModal = () => {
                     <ModalCloseButton />
                     <ModalBody>
                         <Box w={'100%'} display={'flex'} flexWrap={'wrap'} pb={3}>
+                            {/* { console.log(selectedChat) } */}
                             {
-                                // console.log(selectedChat)
                                 selectedChat?.users.map((u, index) => {
                                     return (
                                         <UserBadgeItem
                                             key={index}
                                             user={u}
+                                            groupAdmin={selectedChat.groupAdmin._id}
                                             handleFunction={() => {
                                                 handleDelete(u)
                                             }}
@@ -209,6 +239,7 @@ const UpdateGroupChatModal = () => {
                                 }}
                             />
                         </FormControl>
+                        <br />
                         <Box w={'100%'} display={'flex'} flexWrap={'wrap'}>
                             {
                                 loading ?

@@ -33,7 +33,7 @@ const MyChats = () => {
     useEffect(() => {
         setLoggedUser(JSON.parse(localStorage.getItem('userInfo')))
         fetchChats()
-    }, [chats])
+    }, [])
 
     return (
         <Box
