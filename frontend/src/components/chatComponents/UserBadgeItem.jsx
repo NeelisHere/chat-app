@@ -1,5 +1,5 @@
 import { Box } from "@chakra-ui/react"
-import { CloseIcon } from "@chakra-ui/icons"
+import { CloseIcon, EmailIcon } from "@chakra-ui/icons"
 
 const UserBadgeItem = ({ user, groupAdmin, handleFunction }) => {
     // console.log(`${user._id}, ${groupAdmin}`)
@@ -12,10 +12,8 @@ const UserBadgeItem = ({ user, groupAdmin, handleFunction }) => {
             mb={2}
             variant={'solid'}
             fontSize={12}
-            // backgroundColor={user._id === groupAdmin ? '#186653' : 'teal'}
-            backgroundColor={'teal'}
-            border={user._id === groupAdmin? '2px solid yellow' : 'none'}
-            color={'white'}
+            backgroundColor={user._id === groupAdmin ? 'teal' : '#f4f4f4'}
+            color={user._id === groupAdmin ? 'white' : 'black'}
             cursor={'pointer'}
             onClick={handleFunction}
         >

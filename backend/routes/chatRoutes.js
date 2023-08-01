@@ -9,7 +9,6 @@ const {
 } = require('../controllers/chatControllers.js')
 const init_route = require('../middlewares/initRoute.js')
 const { protect } = require('../middlewares/auth.js')
-
 const router = express.Router()
 
 router.post('/access-chat', init_route, protect, accessChat)
