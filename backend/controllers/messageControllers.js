@@ -35,7 +35,7 @@ module.exports = {
     allMessages: asyncHandler(async(req, res) => {
         try {
             const messages = await Message.find({ chat: req.params.chatId })
-                .populate('sender', 'name pic email')
+                .populate('sender', 'username pic email')
                 .populate('chat')
             res.json(messages)
         } catch (error) {

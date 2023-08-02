@@ -14,7 +14,7 @@ import axios from "axios"
 import UserListItem from "./UserListItem"
 
 
-const UpdateGroupChatModal = () => {
+const UpdateGroupChatModal = ({ fetchMessages }) => {
     const { isOpen, onOpen, onClose } = useDisclosure()
     const { user, selectedChat, setSelectedChat, chats, setChats } = useChatStore((state) => state)
     const [groupChatStates, setGroupChatStates] = useState({
@@ -27,6 +27,7 @@ const UpdateGroupChatModal = () => {
     const [loading, setLoading] = useState(false)
     const [renameLoading, setRenameLoading] = useState(false)
     const toast = useToast()
+
     const fetchChats = async () => {
         try {
             const config = {
@@ -67,6 +68,7 @@ const UpdateGroupChatModal = () => {
             }, config)
             setSelectedChat([...data.users])
             fetchChats()
+            fetchMessages()
             setLoading(false)
         } catch (error) {
             toast({
