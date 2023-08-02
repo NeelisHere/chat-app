@@ -144,7 +144,7 @@ const SingleChat = () => {
                                     // border={'2px solid red'}
                                 />
                                 :
-                                <div className="messages">
+                                <div>
                                     <ScrollableChat messages={messages}/>
                                 </div>
                             }

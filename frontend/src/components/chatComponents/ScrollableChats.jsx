@@ -1,23 +1,33 @@
-import React from 'react'
 import ScrollableFeed from 'react-scrollable-feed'
 import { isLastMessage, isSameSender, isSameSenderMargin, isSameUser } from '../../config/chatLogics'
 import { useChatStore } from '../../store'
 import { Avatar, Box, Tooltip } from '@chakra-ui/react'
+import { useState, useEffect, useRef } from 'react'
+import './styles.css'
 
 const ScrollableChats = ({ messages }) => {
-    const { user } = useChatStore((state)=>state)
+    const { user } = useChatStore((state) => state)
+    const messageEl = useRef(null);
+    useEffect(() => {
+        if (messageEl) {
+            messageEl.current.addEventListener('DOMNodeInserted', (event) => {
+                const { currentTarget: target } = event;
+                target.scroll({ top: target.scrollHeight, behavior: 'smooth' });
+            });
+        }
+    }, [])
 
     return (
-        <ScrollableFeed>
+        <div className='messages' ref={messageEl}>
             {
                 messages && messages.map((msg, index) => {
-                    return(
-                        <div style={{display: 'flex'}} key={index}>
+                    return (
+                        <div style={{ display: 'flex' }} key={index}>
                             {
                                 (
                                     isSameSender(messages, msg, index, user._id) ||
                                     isLastMessage(messages, index, user._id)
-                                ) 
+                                )
                                 &&
                                 (
                                     <Tooltip
@@ -38,8 +48,8 @@ const ScrollableChats = ({ messages }) => {
                                 )
                             }
                             <Box
-                                bg={msg.sender._id === user._id ? 'teal':'white'}
-                                color={msg.sender._id === user._id ? 'white':'black'}
+                                bg={msg.sender._id === user._id ? 'teal' : 'white'}
+                                color={msg.sender._id === user._id ? 'white' : 'black'}
                                 boxShadow={'base'}
                                 maxWidth={'75%'}
                                 borderRadius={'5px'}
@@ -53,7 +63,7 @@ const ScrollableChats = ({ messages }) => {
                     )
                 })
             }
-        </ScrollableFeed>
+        </div>
     )
 }
 

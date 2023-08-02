@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useChatStore } from '../../store'
 import { Box, useToast, Button, Stack, Text, Avatar } from '@chakra-ui/react'
 import axios from 'axios'
 import { AddIcon } from '@chakra-ui/icons'
 import ChatLoading from './ChatLoading.jsx'
 import GroupChatModal from './GroupChatModal'
+import './styles.css'
 
 
 const MyChats = () => {
@@ -29,7 +30,15 @@ const MyChats = () => {
             })
         }
     }
-
+    const messageEl = useRef(null);
+    useEffect(() => {
+        if (messageEl) {
+            messageEl.current.addEventListener('DOMNodeInserted', (event) => {
+                const { currentTarget: target } = event;
+                target.scroll({ top: target.scrollHeight, behavior: 'smooth' });
+            });
+        }
+    }, [])
     useEffect(() => {
         setLoggedUser(JSON.parse(localStorage.getItem('userInfo')))
         fetchChats()
@@ -75,31 +84,21 @@ const MyChats = () => {
                     </Button>
                 </GroupChatModal>
             </Box>
-            <Box
-                display={'flex'}
-                flexDir={'column'}
-                p={3}
-                // bg={'#f8f8f8'}
-                w={'100%'}
-                h={'100%'}
-                borderRadius={'lg'}
-                overflowY={'hidden'}
-                sx={
-                    {
-                        '&::-webkit-scrollbar': {
-                            display: 'none'
-                        }
-                    }
-                }
+            <div
+                className='scrollable-chat-list-window'
+                // display={'flex'}
+                // flexDir={'column'}
+                // p={3}
+                // mb={3}
+                // w={'100%'}
+                // h={'450px'}
+                // borderRadius={'lg'}
+                // overflowY={'auto'}
+                // border={'2px solid teal'}
             >
-                {/* {console.log(chats, typeof chats)}
-                {chats.map((chat)=>{
-                    console.log(chat, typeof chat)
-                    return (<div>{chat._id}</div>)
-                })} */}
                 {
                     chats ?
-                        <Stack >
+                        <Stack ref={messageEl}>
                             {
                                 chats.map((chat, index) => {
                                     const otherUser = chat.isGroupChat ? '' : chat.users.find(({ _id }) => (_id !== user._id))
@@ -153,7 +152,7 @@ const MyChats = () => {
                         <ChatLoading />
                 }
 
-            </Box>
+            </div>
         </Box>
     )
 }
