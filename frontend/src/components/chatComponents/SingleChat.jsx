@@ -7,6 +7,11 @@ import UpdateGroupChatModal from "./UpdateGroupChatModal"
 import { useEffect, useState } from "react"
 import axios from "axios"
 import './styles.css'
+import { io } from "socket.io-client"
+
+
+const ENDPOINT = 'http://localhost:8000'
+let socket, selectedChatCompare
 
 
 const SingleChat = () => {
@@ -15,6 +20,7 @@ const SingleChat = () => {
     const [messages, setMessages] = useState([])
     const [loading, setLoading] = useState(false)
     const [newMessage, setNewMessage] = useState('')
+    const [socketConnected, setSocketConnected] = useState(false)
     const toast = useToast()
 
     const sendMessage = async (e) =>{
@@ -33,6 +39,7 @@ const SingleChat = () => {
                     content: newMessage,
                     chatId: selectedChat._id
                 }, config)
+                socket.emit('new message', data)
                 setMessages([...messages, data])
                 // console.log(data)
 
@@ -62,6 +69,7 @@ const SingleChat = () => {
             setMessages(data)
             // console.log(messages)
             setLoading(false)
+            socket.emit('join chat', selectedChat._id)
         } catch (error) {
             toast({
                 title: 'Error occured',
@@ -73,9 +81,27 @@ const SingleChat = () => {
             })
         }
     }
+    
+    useEffect(()=>{
+        socket = io(ENDPOINT)
+        socket.emit('setup', user)
+        socket.on('connection', () => setSocketConnected(true))
+    },[])
+
     useEffect(()=>{
         fetchMessages()
+        selectedChatCompare = selectedChat
     },[selectedChat])
+
+    useEffect(()=>{
+        socket.on('message received', (newMessageReceived) => {
+            if(!selectedChatCompare || selectedChatCompare._id !== newMessageReceived.chat._id){
+                //give notification
+            }else{
+                setMessages([...messages, newMessageReceived])
+            }
+        })
+    })
 
     const typingHandler = (e) => {
         // typing indicator logic

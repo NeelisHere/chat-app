@@ -119,7 +119,7 @@ const SideDrawer = () => {
 						<Text display={{ base: 'none', md: 'flex' }} px={4}>Search User</Text>
 					</Button>
 				</Tooltip>
-				<Text fontSize={'2xl'} px={4}>Let's Chat</Text>
+				<Text fontSize={'2xl'} px={4}>Whatsapp University</Text>
 				<div>
 					<Menu>
 						<MenuButton p={1} m={'0px 10px 0px 10px'}>

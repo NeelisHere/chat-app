@@ -52,7 +52,9 @@ const ScrollableChats = ({ messages }) => {
                                 color={msg.sender._id === user._id ? 'white' : 'black'}
                                 boxShadow={'base'}
                                 maxWidth={'75%'}
-                                borderRadius={'5px'}
+                                // borderRadius={'5px'}
+                                borderTopLeftRadius={'5px'}
+                                borderBottomRightRadius={'5px'}
                                 padding={'5px 15px'}
                                 marginLeft={isSameSenderMargin(messages, msg, index, user._id)}
                                 marginTop={isSameUser(messages, msg, index, user._id) ? '3px' : '10px'}

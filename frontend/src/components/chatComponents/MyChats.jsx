@@ -84,18 +84,7 @@ const MyChats = () => {
                     </Button>
                 </GroupChatModal>
             </Box>
-            <div
-                className='scrollable-chat-list-window'
-                // display={'flex'}
-                // flexDir={'column'}
-                // p={3}
-                // mb={3}
-                // w={'100%'}
-                // h={'450px'}
-                // borderRadius={'lg'}
-                // overflowY={'auto'}
-                // border={'2px solid teal'}
-            >
+            <div className='scrollable-chat-list-window'>
                 {
                     chats ?
                         <Stack ref={messageEl}>
