@@ -7,6 +7,7 @@ export const useChatStore = create((set) => ({
     isLoggedIn: false,
     selectedChat: [],
     chats: [],
+    notification: [],
     getCurrentUser: (currentUser)=> set((state)=>({ 
         user: { ...state.user, ...currentUser },
         isLoggedIn: currentUser? true: false 
@@ -16,6 +17,8 @@ export const useChatStore = create((set) => ({
     }),
     setChats: (userChats) => set((state)=>{
         return { ...state, chats: userChats }
+    }),
+    setNotification: (new_notification) => set((state)=>{
+        return { ...state, notification: new_notification }
     })
-
 }));

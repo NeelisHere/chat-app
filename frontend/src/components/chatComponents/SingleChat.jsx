@@ -17,7 +17,12 @@ let socket, selectedChatCompare
 
 
 const SingleChat = () => {
-    const { user, selectedChat, setSelectedChat } = useChatStore((state)=>state)
+    const { 
+        user, selectedChat, 
+        setSelectedChat, chats, setChats, 
+        notification, setNotification 
+    } = useChatStore((state)=>state)
+
     const sender = selectedChat.users?.filter((u) => u._id !== user._id)[0]
     const [messages, setMessages] = useState([])
     const [loading, setLoading] = useState(false)
@@ -27,6 +32,24 @@ const SingleChat = () => {
     const [isTyping, setIsTyping] = useState(false)
     const toast = useToast()
 
+    const fetchChats = async () => {
+        try {
+            const config = {
+                headers: { Authorization: `Bearer ${user.token}` }
+            }
+            const { data } = await axios.get('/api/v1/chats/get-chats', config)
+            setChats([...data])
+        } catch (error) {
+            toast({
+                title: 'Error occured',
+                description: 'Failed to load the Chats',
+                status: 'error',
+                duration: 5000,
+                isClosable: true,
+                position: 'bottom-left'
+            })
+        }
+    }
     const sendMessage = async (e) =>{
         
         if(e.key === 'Enter' && newMessage){
@@ -100,11 +123,22 @@ const SingleChat = () => {
         selectedChatCompare = selectedChat
     },[selectedChat])
 
+    console.log('1. ', notification)
+
     useEffect(()=>{
         socket.on('message received', (newMessageReceived) => {
             if(!selectedChatCompare || selectedChatCompare._id !== newMessageReceived.chat._id){
-                //give notification
+                if(notification.findIndex((n)=>n.chat._id === newMessageReceived.chat._id) === -1){
+                    setNotification([newMessageReceived, ...notification])
+                    fetchChats()
+                    // console.log('1. ', notification)
+                }
             }else{
+                const index = notification.findIndex((n)=>n.chat._id === newMessageReceived.chat._id)
+                if(index !== -1){
+                    setNotification(notification.splice(index, 1))
+                }
+                // alert(index)
                 setMessages([...messages, newMessageReceived])
             }
         })
